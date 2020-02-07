@@ -16,9 +16,12 @@ import com.haulmont.cuba.gui.model.DataContext;
 import com.haulmont.cuba.gui.screen.*;
 import com.company.foodreservationeshop.entity.Order;
 import com.haulmont.cuba.security.global.UserSession;
+import org.apache.commons.lang3.time.DateUtils;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -59,8 +62,9 @@ public class OrderEdit extends StandardEditor<Order> {
      */
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        if (getEditedEntity().getOrderAt()==null)getEditedEntity().setOrderAt(new Date());
-        if (getEditedEntity().getUser()==null)getEditedEntity().setUser(userSession.getUser());
+        if (getEditedEntity().getOrderAt() == null) getEditedEntity().setOrderAt(new Date());
+
+        if (getEditedEntity().getUser() == null) getEditedEntity().setUser(userSession.getUser());
         Store store = getEditedEntity().getStore();
         if (null == store) {
             storeDishesDl.setQuery("select d from foodreservationeshop_Dish d ");
@@ -68,6 +72,32 @@ public class OrderEdit extends StandardEditor<Order> {
             storeDishesDl.setParameter("store", store);
         }
         getScreenData().loadAll();
+        if (!checkUserOrderable()) {
+            notifications.create(Notifications.NotificationType.WARNING).withCaption("您今天已有预定，请明天再来。").show();
+        }
+    }
+
+    /**
+     * 检查当前用户今天是否可以订餐
+     *
+     * @author Rico
+     * @date 2020-02-08 02:11
+     */
+    private boolean checkUserOrderable() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        Date today = null;
+        try {
+            today = sdf.parse(sdf.format(new Date()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        boolean empty = dataManager.load(Order.class)
+                .query("select o from foodreservationeshop_Order o where o.user = :user and o.orderAt = :today")
+                .parameter("user", userSession.getUser())
+                .parameter("today", today)
+                .list().isEmpty();
+        return empty;
+
     }
 
 
@@ -105,6 +135,10 @@ public class OrderEdit extends StandardEditor<Order> {
      * @date 2020-02-08 00:23
      */
     public void onAddDishToOrderClick() {
+        if (!checkUserOrderable()) {
+            notifications.create(Notifications.NotificationType.WARNING).withCaption("您今天已有预定，请明天再来。").show();
+            return;
+        }
         Store store = getEditedEntity().getStore();
         if (null == store) {
             notifications.create(Notifications.NotificationType.WARNING).withCaption("请预定门店后,再选择菜品。").show();
