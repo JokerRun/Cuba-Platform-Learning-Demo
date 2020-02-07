@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+
+    <view entity="foodreservationeshop_Order" name="order-browse-view" extends="_minimal">
+        <property name="user" view="_minimal"/>
+        <property name="store" view="_minimal"/>
+        <property name="dish" view="_minimal">
+            <property name="name"/>
+            <property name="price"/>
+        </property>
+        <property name="orderAt"/>
+        <property name="amount"/>
+    </view>
+    <view entity="foodreservationeshop_Order" name="order-edit-view" extends="_minimal">
+        <property name="user" view="_minimal"/>
+        <property name="store" view="_minimal"/>
+        <property name="dish" view="_minimal">
+            <property name="name"/>
+            <property name="price"/>
+        </property>
+        <property name="orderAt"/>
+        <property name="amount"/>
+    </view>
+    <view entity="foodreservationeshop_Dish" name="dish-browse-view" extends="_minimal">
+        <property name="name"/>
+        <property name="price"/>
+        <property name="store" view="_minimal"/>
+    </view>
+    <view entity="foodreservationeshop_Dish" name="dish-edit-view" extends="_minimal">
+        <property name="name"/>
+        <property name="price"/>
+        <property name="store" view="_minimal"/>
+    </view>
+</views>

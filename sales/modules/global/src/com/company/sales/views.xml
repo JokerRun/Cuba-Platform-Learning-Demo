@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+
+    <view entity="sales_Order" name="order-with-customer" extends="_minimal">
+        <property name="customer" view="_minimal"/>
+        <property name="date"/>
+        <property name="amount"/>
+    </view>
+</views>

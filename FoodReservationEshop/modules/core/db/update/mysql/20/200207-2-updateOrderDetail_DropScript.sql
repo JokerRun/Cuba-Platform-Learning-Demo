@@ -1,0 +1,1 @@
+alter table FOODRESERVATIONESHOP_ORDER_DETAIL drop column ORDER_AT__U63261 cascade ;

@@ -1,0 +1,2 @@
+alter table FOODRESERVATIONESHOP_ORDER_DETAIL change column ORDER_AT ORDER_AT__U63261 date^
+alter table FOODRESERVATIONESHOP_ORDER_DETAIL modify column ORDER_AT__U63261 date null ;

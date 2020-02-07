@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://editorCaption"
+        focusComponent="form"
+        messagesPack="com.company.foodreservationeshop.web.screens.order">
+    <data>
+        <instance id="orderDc"
+                  class="com.company.foodreservationeshop.entity.Order"
+                  view="order-edit-view">
+            <loader/>
+            <collection id="dishDc" property="dish"/>
+        </instance>
+        <collection id="usersDc" class="com.haulmont.cuba.security.entity.User" view="_minimal">
+            <loader id="usersLc">
+                <query>
+                    <![CDATA[select e from sec$User e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="storesDc" class="com.company.foodreservationeshop.entity.Store" view="_minimal">
+            <loader id="storesLc">
+                <query>
+                    <![CDATA[select e from foodreservationeshop_Store e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="storeDishesDc" class="com.company.foodreservationeshop.entity.Dish" view="dish-browse-view">
+            <loader id="storeDishesDl">
+<!--                <query>-->
+<!--                    <![CDATA[select e from foodreservationeshop_Dish e ]]>-->
+<!--                </query>-->
+                <query>
+                    <![CDATA[select d from foodreservationeshop_Dish d where d.store = :store]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <actions>
+        <action id="addDishToOrder" caption="addDishToOrder" invoke="onAddDishToOrderClick"/>
+    </actions>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="editActions" spacing="true">
+        <form id="form" dataContainer="orderDc">
+            <column width="250px">
+                <lookupPickerField id="userField" optionsContainer="usersDc" property="user" editable="false">
+                    <actions>
+                        <action id="lookup" type="picker_lookup"/>
+                    </actions>
+                </lookupPickerField>
+                <lookupPickerField id="storeField" optionsContainer="storesDc" property="store">
+                    <actions>
+                        <action id="lookup" type="picker_lookup"/>
+                    </actions>
+                </lookupPickerField>
+                <dateField id="orderAtField" property="orderAt" caption="&#19979;&#21333;&#26085;&#26399;"
+                           editable="false"/>
+                <textField id="amountField" property="amount" editable="false"
+                           caption="&#35746;&#21333;&#24635;&#39069;"/>
+            </column>
+        </form>
+        <groupBox id="storeMenu" spacing="true" caption="Stroe Menu">
+            <table id="storeDishes" height="200px" width="100%" caption="Store Dishes" dataContainer="storeDishesDc">
+                <columns>
+                    <column id="name"/>
+                    <column id="store"/>
+                    <column id="price"/>
+                </columns>
+                <buttonsPanel>
+                    <button id="addToOrder" caption="AddToOrder" action="addDishToOrder"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <groupBox id="dishBox" caption="msg://com.company.foodreservationeshop.entity/Order.dish">
+            <table id="dishTable" dataContainer="dishDc" width="100%" height="200px">
+                <actions>
+                    <action id="add" type="add"/>
+                    <action id="exclude" type="exclude"/>
+                </actions>
+                <columns>
+                    <column id="name"/>
+                    <column id="store"/>
+                    <column id="price"/>
+                </columns>
+                <buttonsPanel>
+                    <button action="dishTable.add"/>
+                    <button action="dishTable.exclude"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>
